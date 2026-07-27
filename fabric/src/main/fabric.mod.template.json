@@ -22,9 +22,6 @@
 		"client": [
 			"org.mtr.init.MTRClient"
 		],
-		"modmenu": [
-			"org.mtr.init.ModMenuConfig"
-		],
 		"jade": [
 			"org.mtr.init.JadeConfig"
 		]

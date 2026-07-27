@@ -4,7 +4,7 @@ import org.mtr.core.WebserverSetup
 import org.mtr.mod.BuildTools
 
 plugins {
-	id "fabric-loom" version "1.15-SNAPSHOT"
+	id "net.fabricmc.fabric-loom" version "1.17-SNAPSHOT"
 }
 
 final BuildTools buildTools = new BuildTools(minecraftVersion, "fabric", project)
@@ -17,15 +17,25 @@ loom {
 
 dependencies {
 	minecraft "com.mojang:minecraft:${minecraftVersion}"
-	if (minecraftVersion.startsWith("26.") || minecraftVersion.startsWith("27.")) {
-	mappings loom.officialMojangMappings()
-} else {
-	mappings "net.fabricmc:yarn:${buildTools.getYarnVersion()}:v2"
-}
-	modImplementation "net.fabricmc:fabric-loader:${buildTools.getFabricVersion()}"
-	modImplementation "net.fabricmc.fabric-api:fabric-api:${buildTools.getFabricApiVersion()}"
-	modApi("com.terraformersmc:modmenu:${buildTools.getModMenuVersion()}") { exclude group: "net.fabricmc", module: "fabric-loader" }
+	final boolean unobfuscated = minecraftVersion.startsWith("26.") || minecraftVersion.startsWith("27.")
+	if (!unobfuscated) {
+		mappings "net.fabricmc:yarn:${buildTools.getYarnVersion()}:v2"
+	}
+	// net.fabricmc.fabric-loom disables obfuscation → no modImplementation configs
+	if (unobfuscated) {
+		implementation "net.fabricmc:fabric-loader:${buildTools.getFabricVersion()}"
+		implementation "net.fabricmc.fabric-api:fabric-api:${buildTools.getFabricApiVersion()}"
+	} else {
+		modImplementation "net.fabricmc:fabric-loader:${buildTools.getFabricVersion()}"
+		modImplementation "net.fabricmc.fabric-api:fabric-api:${buildTools.getFabricApiVersion()}"
+		modApi("com.terraformersmc:modmenu:${buildTools.getModMenuVersion()}") { exclude group: "net.fabricmc", module: "fabric-loader" }
+	}
 	shadowImplementation "org.mtr:Minecraft-Mappings-fabric-${minecraftVersion}:0.0.1-dev"
+	// minecraft-client.jar onto compile classpath
+	def _mtrClientJar = file("${gradle.gradleUserHomeDir}/caches/fabric-loom/${minecraftVersion}/minecraft-client.jar")
+	if ((minecraftVersion.startsWith("26.") || minecraftVersion.startsWith("27.")) && _mtrClientJar.exists()) {
+		compileOnly files(_mtrClientJar)
+	}
 	testImplementation "org.junit.jupiter:junit-jupiter-api:5.+"
 	testImplementation "org.junit.platform:junit-platform-launcher:1.+"
 	testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.+"
@@ -132,10 +142,15 @@ shadowJar {
 	exclude excludeAssets == "true" ? "assets" : "abc123"
 }
 
-remapJar {
-	dependsOn(shadowJar)
-	mustRunAfter(shadowJar)
-	inputFile = file(shadowJar.archivePath)
+if (!(minecraftVersion.startsWith("26.") || minecraftVersion.startsWith("27."))) {
+	remapJar {
+		dependsOn(shadowJar)
+		mustRunAfter(shadowJar)
+		inputFile = shadowJar.archiveFile
+	}
+} else {
+	// Unobfuscated Loom: publish/shadow jar is already named; hook shadow into assemble
+	tasks.named("assemble").configure { dependsOn(shadowJar) }
 }
 
 test {

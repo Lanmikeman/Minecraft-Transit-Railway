@@ -77,20 +77,20 @@ public class TicketSystem {
 
 	private static int getPlayerScore(World world, PlayerEntity player, String objective, String title) {
 		final ScoreboardObjective scoreboardObjective = getOrCreateScoreboardObjective(world, objective, title);
-		return scoreboardObjective == null ? 0 : ScoreboardHelper.getPlayerScore(world.getScoreboard(), player.getGameProfile().getName(), scoreboardObjective);
+		return scoreboardObjective == null ? 0 : ScoreboardHelper.getPlayerScore(world.getScoreboard(), player.getGameProfile().name(), scoreboardObjective);
 	}
 
 	private static void setPlayerScore(World world, PlayerEntity player, String objective, String title, int value) {
 		final ScoreboardObjective scoreboardObjective = getOrCreateScoreboardObjective(world, objective, title);
 		if (scoreboardObjective != null) {
-			ScoreboardHelper.setPlayerScore(world.getScoreboard(), player.getGameProfile().getName(), scoreboardObjective, value);
+			ScoreboardHelper.setPlayerScore(world.getScoreboard(), player.getGameProfile().name(), scoreboardObjective, value);
 		}
 	}
 
 	private static void incrementPlayerScore(World world, PlayerEntity player, String objective, String title, int value) {
 		final ScoreboardObjective scoreboardObjective = getOrCreateScoreboardObjective(world, objective, title);
 		if (scoreboardObjective != null) {
-			ScoreboardHelper.incrementPlayerScore(world.getScoreboard(), player.getGameProfile().getName(), scoreboardObjective, value);
+			ScoreboardHelper.incrementPlayerScore(world.getScoreboard(), player.getGameProfile().name(), scoreboardObjective, value);
 		}
 	}
 
@@ -188,6 +188,12 @@ public class TicketSystem {
 		@Nonnull
 		@Override
 		public String asString2() {
+			return name;
+		}
+
+		@Nonnull
+		@Override
+		public String getSerializedName2() {
 			return name;
 		}
 	}

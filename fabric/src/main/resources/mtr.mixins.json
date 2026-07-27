@@ -2,15 +2,10 @@
 	"required": true,
 	"minVersion": "0.8",
 	"package": "org.mtr.mixin",
-	"compatibilityLevel": "JAVA_8",
+	"compatibilityLevel": "JAVA_25",
 	"refmap": "mtr.refmap.json",
-	"mixins": [
-		"PlayerTeleportationStateAccessor"
-	],
-	"client": [
-		"ClientWorldRenderingMixin",
-		"PlayerRendererOffsetMixin"
-	],
+	"mixins": [],
+	"client": [],
 	"server": [],
 	"injectors": {
 		"defaultRequire": 1

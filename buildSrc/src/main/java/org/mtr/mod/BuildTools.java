@@ -99,6 +99,9 @@ public class BuildTools {
 	}
 
 	public boolean hasJadeSupport() {
+		if (majorVersion >= 26) {
+			return false;
+		}
 		return loader.equals("fabric") ? majorVersion >= 17 : majorVersion >= 19;
 	}
 
@@ -112,6 +115,9 @@ public class BuildTools {
 	}
 
 	public boolean hasWthitSupport() {
+		if (majorVersion >= 26) {
+			return false;
+		}
 		return majorVersion >= 17;
 	}
 
@@ -127,6 +133,9 @@ public class BuildTools {
 	}
 
 	public String getModMenuVersion() {
+		if (majorVersion >= 26) {
+			return "0.0.0-unsupported"; // skip real resolve for calendar MC
+		}
 		if (minecraftVersion.equals("1.20.4")) {
 			return "9.0.0"; // TODO latest version not working
 		}
