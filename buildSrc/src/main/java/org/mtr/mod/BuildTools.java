@@ -61,7 +61,7 @@ public class BuildTools {
 		this.loader = loader;
 		path = project.getProjectDir().toPath();
 		version = project.getVersion().toString();
-		final String[] verParts = minecraftVersion.split("\.");
+		final String[] verParts = minecraftVersion.split("\\.");
 		final int first = Integer.parseInt(verParts[0]);
 		if (first >= 26) {
 			majorVersion = first;
