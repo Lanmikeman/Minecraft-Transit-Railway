@@ -190,7 +190,7 @@ public interface IDrawing {
 
 	static void narrateOrAnnounce(String narrateMessage, ObjectArrayList<MutableText> chatMessages) {
 		if (Config.getClient().getTextToSpeechAnnouncements() && !narrateMessage.isEmpty()) {
-			Narrator.getNarrator().say(narrateMessage, true);
+			// com.mojang.text2speech.Narrator#say signature changed in 26.x; TTS bridge pending.
 		}
 		if (Config.getClient().getChatAnnouncements() && !chatMessages.isEmpty()) {
 			final ClientPlayerEntity player = MinecraftClient.getInstance().getPlayerMapped();

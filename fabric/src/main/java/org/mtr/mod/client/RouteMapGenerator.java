@@ -678,7 +678,7 @@ public class RouteMapGenerator implements IGui {
 	private static void drawLine(NativeImage nativeImage, int x, int y, int directionX, int directionY, int length, int color) {
 		final int halfLineHeight = lineSize / 2;
 		final int xWidth = directionX == 0 ? halfLineHeight : 0;
-		final int yWidth = directionX == 0 ? 0 : directionY == 0 ? halfLineHeight : Math.round(lineSize * MathHelper.getSquareRootOfTwoMapped() / 2);
+		final int yWidth = directionX == 0 ? 0 : directionY == 0 ? halfLineHeight : Math.round((float) (lineSize * MathHelper.getSquareRootOfTwoMapped() / 2));
 		final int yMin = y - halfLineHeight - (directionY < 0 ? length : 0) + 1;
 		final int yMax = y + halfLineHeight + (directionY > 0 ? length : 0) - 1;
 		final int drawOffset = directionX != 0 && directionY != 0 ? halfLineHeight : 0;

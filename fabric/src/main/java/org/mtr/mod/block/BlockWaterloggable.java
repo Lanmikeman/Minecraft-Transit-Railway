@@ -12,25 +12,25 @@ public abstract class BlockWaterloggable extends BlockExtension implements Water
 
 	public BlockWaterloggable(BlockSettings blockSettings) {
 		super(blockSettings);
-		setDefaultState2(getDefaultState2().with(new Property<>(SlabBlockExtension.WATERLOGGED), false));
+		setDefaultState2(getDefaultState2().with(SlabBlockExtension.WATERLOGGED, false));
 	}
 
 	@Nonnull
 	@Override
 	public BlockState getPlacementState2(ItemPlacementContext itemPlacementContext) {
-		return getDefaultState2().with(new Property<>(SlabBlockExtension.WATERLOGGED), itemPlacementContext.getWorld().getFluidState(itemPlacementContext.getBlockPos()).getFluid().data == Fluids.getWaterMapped().data);
+		return getDefaultState2().with(SlabBlockExtension.WATERLOGGED, itemPlacementContext.getWorld().getFluidState(itemPlacementContext.getBlockPos()).getFluid().data == Fluids.getWaterMapped().data);
 	}
 
 	@Nonnull
 	@Override
 	public FluidState getFluidState2(BlockState state) {
-		return state.get(new Property<>(SlabBlockExtension.WATERLOGGED)) ? Fluids.getWaterMapped().getStill(false) : super.getFluidState2(state);
+		return state.get(SlabBlockExtension.WATERLOGGED) ? Fluids.getWaterMapped().getStill(false) : super.getFluidState2(state);
 	}
 
 	@Nonnull
 	@Override
 	public BlockState getStateForNeighborUpdate2(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
-		if (state.get(new Property<>(SlabBlockExtension.WATERLOGGED))) {
+		if (state.get(SlabBlockExtension.WATERLOGGED)) {
 			scheduleFluidTick(World.cast(world), pos, Fluid.cast(Fluids.getWaterMapped()), 5);
 		}
 
@@ -39,6 +39,6 @@ public abstract class BlockWaterloggable extends BlockExtension implements Water
 
 	@Override
 	public void addBlockProperties(List<HolderBase<?>> properties) {
-		properties.add(new Property<>(SlabBlockExtension.WATERLOGGED));
+		properties.add(SlabBlockExtension.WATERLOGGED);
 	}
 }

@@ -138,6 +138,10 @@ build {
 	}
 }
 
+tasks.named("processResources").configure {
+	dependsOn("setupFiles")
+}
+
 shadowJar {
 	exclude excludeAssets == "true" ? "assets" : "abc123"
 }

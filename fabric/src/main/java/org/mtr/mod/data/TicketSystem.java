@@ -97,7 +97,7 @@ public class TicketSystem {
 	@Nullable
 	private static ScoreboardObjective getOrCreateScoreboardObjective(World world, String objective, String title) {
 		try {
-			return ScoreboardHelper.addObjective(world.getScoreboard(), objective, ScoreboardCriteria.DUMMY, new Text(TextHelper.literal(title).data), ScoreboardCriterionRenderType.INTEGER);
+			return ScoreboardHelper.addObjective(world.getScoreboard(), objective, ScoreboardCriteria.DUMMY, TextHelper.literal(title), ScoreboardCriterionRenderType.INTEGER);
 		} catch (Exception ignored) {
 		}
 		return ScoreboardHelper.getScoreboardObjective(world.getScoreboard(), objective);

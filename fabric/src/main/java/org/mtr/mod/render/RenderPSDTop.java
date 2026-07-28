@@ -11,10 +11,10 @@ import org.mtr.mod.client.IDrawing;
 
 public class RenderPSDTop extends RenderRouteBase<BlockPSDTop.BlockEntity> {
 
-	private static final float END_FRONT_OFFSET = 1 / (MathHelper.getSquareRootOfTwoMapped() * 16);
-	private static final float BOTTOM_DIAGONAL_OFFSET = ((float) Math.sqrt(3) - 1) / 32;
-	private static final float ROOT_TWO_SCALED = MathHelper.getSquareRootOfTwoMapped() / 16;
-	private static final float BOTTOM_END_DIAGONAL_OFFSET = END_FRONT_OFFSET - BOTTOM_DIAGONAL_OFFSET / MathHelper.getSquareRootOfTwoMapped();
+	private static final float END_FRONT_OFFSET = (float) (1 / (MathHelper.getSquareRootOfTwoMapped() * 16));
+	private static final float BOTTOM_DIAGONAL_OFFSET = (float) (((float) Math.sqrt(3) - 1) / 32);
+	private static final float ROOT_TWO_SCALED = (float) (MathHelper.getSquareRootOfTwoMapped() / 16);
+	private static final float BOTTOM_END_DIAGONAL_OFFSET = (float) (END_FRONT_OFFSET - BOTTOM_DIAGONAL_OFFSET / MathHelper.getSquareRootOfTwoMapped());
 	private static final float COLOR_STRIP_START = 14.5F / 16;
 	private static final float COLOR_STRIP_END = 15 / 16F;
 

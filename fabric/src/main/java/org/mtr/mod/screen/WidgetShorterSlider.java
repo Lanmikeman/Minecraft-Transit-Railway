@@ -1,6 +1,5 @@
 package org.mtr.mod.screen;
 
-import org.mtr.mapping.holder.Identifier;
 import org.mtr.mapping.holder.Screen;
 import org.mtr.mapping.holder.Text;
 import org.mtr.mapping.mapper.GraphicsHolder;
@@ -65,23 +64,8 @@ public class WidgetShorterSlider extends SliderWidgetExtension implements IGui {
 
 	@Override
 	public void render(GraphicsHolder graphicsHolder, int mouseX, int mouseY, float delta) {
-		final boolean isHovered = isHovered();
-
-		final GuiDrawing guiDrawing = new GuiDrawing(graphicsHolder);
-		guiDrawing.beginDrawingTexture(new Identifier(String.format("textures/gui/sprites/widget/slider%s.png", isHovered ? "_highlighted" : "")));
-		IGui.drawTexture(guiDrawing, getX2(), getY2(), 0F, 0, width / 2, height / 2, 200, 20);
-		IGui.drawTexture(guiDrawing, getX2(), getY2() + height / 2, 0F, 20 - height / 2F, width / 2, height / 2, 200, 20);
-		IGui.drawTexture(guiDrawing, getX2() + width / 2, getY2(), 200F - width / 2F, 0, width / 2, height / 2, 200, 20);
-		IGui.drawTexture(guiDrawing, getX2() + width / 2, getY2() + height / 2, 200F - width / 2F, 20 - height / 2F, width / 2, height / 2, 200, 20);
-		guiDrawing.finishDrawingTexture();
-
-		guiDrawing.beginDrawingTexture(new Identifier(String.format("textures/gui/sprites/widget/slider_handle%s.png", isHovered ? "_highlighted" : "")));
-		final int xOffset = (width - SLIDER_WIDTH) * getIntValue() / maxValue;
-		IGui.drawTexture(guiDrawing, getX2() + xOffset, getY2(), 0F, 0, SLIDER_WIDTH / 2, height / 2, 8, 20);
-		IGui.drawTexture(guiDrawing, getX2() + xOffset, getY2() + height / 2, 0, 20 - height / 2F, SLIDER_WIDTH / 2, height / 2, 8, 20);
-		IGui.drawTexture(guiDrawing, getX2() + xOffset + SLIDER_WIDTH / 2, getY2(), 200F - SLIDER_WIDTH / 2F, 0, SLIDER_WIDTH / 2, height / 2, 8, 20);
-		IGui.drawTexture(guiDrawing, getX2() + xOffset + SLIDER_WIDTH / 2, getY2() + height / 2, 200F - SLIDER_WIDTH / 2F, 20 - height / 2F, SLIDER_WIDTH / 2, height / 2, 8, 20);
-		guiDrawing.finishDrawingTexture();
+		// 26.1 slider sprites are atlas entries (widget/slider); old 200x20 UV atlas drawing misplaces handles.
+		super.render(graphicsHolder, mouseX, mouseY, delta);
 
 		graphicsHolder.drawText(getMessage2().getString(), getX2() + width + TEXT_PADDING, getY2() + (height - TEXT_HEIGHT) / 2, ARGB_WHITE, false, GraphicsHolder.getDefaultLight());
 
@@ -90,6 +74,7 @@ public class WidgetShorterSlider extends SliderWidgetExtension implements IGui {
 				final int xOffset1 = (width - SLIDER_WIDTH) * i * markerFrequency / maxValue;
 				final int x = getX2() + xOffset1 + SLIDER_WIDTH / 3;
 				final int y = getY2() + height;
+				final GuiDrawing guiDrawing = new GuiDrawing(graphicsHolder);
 				guiDrawing.beginDrawingRectangle();
 				guiDrawing.drawRectangle(x, y, x + 2, y + TICK_HEIGHT, ARGB_GRAY);
 				guiDrawing.finishDrawingRectangle();

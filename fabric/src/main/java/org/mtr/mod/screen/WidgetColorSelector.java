@@ -73,6 +73,7 @@ public class WidgetColorSelector extends ButtonWidgetExtension implements IGui {
 		private float saturation;
 		private float brightness;
 		private DraggingState draggingState = DraggingState.NONE;
+		private boolean updatingText;
 
 		private final int oldColor;
 		private final Consumer<Integer> colorCallback;
@@ -141,16 +142,27 @@ public class WidgetColorSelector extends ButtonWidgetExtension implements IGui {
 			final int selectedColor = Color.HSBtoRGB(hue, saturation, brightness);
 			guiDrawing.drawRectangle(SQUARE_SIZE * 4 + mainWidth + 1, SQUARE_SIZE * 7 + TEXT_FIELD_PADDING * 4 + 1, SQUARE_SIZE * 4 + mainWidth + RIGHT_WIDTH - 1, mainHeight - 1, selectedColor);
 
+			// Hue strip: one row each (O(height)). SB square: one vertical gradient per column
+			// (O(width)) — NOT per-pixel fills; those freeze 26.1 GuiRenderState.
+			final int hueDenom = Math.max(1, mainHeight - 1);
 			for (int drawHue = 0; drawHue < mainHeight; drawHue++) {
-				final int color = Color.HSBtoRGB((float) drawHue / (mainHeight - 1), 1, 1);
+				final int color = Color.HSBtoRGB((float) drawHue / hueDenom, 1, 1);
 				guiDrawing.drawRectangle(SQUARE_SIZE * 2 + mainWidth, SQUARE_SIZE + drawHue, SQUARE_SIZE * 3 + mainWidth, SQUARE_SIZE + drawHue + 1, color);
 			}
 
+			final int satDenom = Math.max(1, mainWidth - 1);
 			for (int drawSaturation = 0; drawSaturation < mainWidth; drawSaturation++) {
-				for (int drawBrightness = 0; drawBrightness < mainHeight; drawBrightness++) {
-					final int color = Color.HSBtoRGB(hue, (float) drawSaturation / (mainWidth - 1), (float) drawBrightness / (mainHeight - 1));
-					guiDrawing.drawRectangle(SQUARE_SIZE + drawSaturation, SQUARE_SIZE + mainHeight - drawBrightness - 1, SQUARE_SIZE + drawSaturation + 1, SQUARE_SIZE + mainHeight - drawBrightness, color);
-				}
+				final float sat = (float) drawSaturation / satDenom;
+				final int colorBright = Color.HSBtoRGB(hue, sat, 1);
+				final int colorDark = Color.HSBtoRGB(hue, sat, 0);
+				guiDrawing.drawRectangleGradient(
+						SQUARE_SIZE + drawSaturation,
+						SQUARE_SIZE,
+						SQUARE_SIZE + drawSaturation + 1,
+						SQUARE_SIZE + mainHeight,
+						colorBright,
+						colorDark
+				);
 			}
 
 			final int selectedHueInt = Math.round(hue * (mainHeight - 1));
@@ -225,15 +237,26 @@ public class WidgetColorSelector extends ButtonWidgetExtension implements IGui {
 		}
 
 		private void setColorText(int color, boolean padZero) {
-			final String colorString = Integer.toHexString(color & RGB_WHITE).toUpperCase(Locale.ENGLISH);
-			textFieldColor.setText2(padZero ? StringUtils.leftPad(colorString, 6, "0") : colorString);
-			textFieldRed.setText2(String.valueOf((color >> 16) & 0xFF));
-			textFieldGreen.setText2(String.valueOf((color >> 8) & 0xFF));
-			textFieldBlue.setText2(String.valueOf(color & 0xFF));
-			buttonReset.active = (color & RGB_WHITE) != oldColor;
+			if (updatingText) {
+				return;
+			}
+			updatingText = true;
+			try {
+				final String colorString = Integer.toHexString(color & RGB_WHITE).toUpperCase(Locale.ENGLISH);
+				textFieldColor.setText2(padZero ? StringUtils.leftPad(colorString, 6, "0") : colorString);
+				textFieldRed.setText2(String.valueOf((color >> 16) & 0xFF));
+				textFieldGreen.setText2(String.valueOf((color >> 8) & 0xFF));
+				textFieldBlue.setText2(String.valueOf(color & 0xFF));
+				buttonReset.active = (color & RGB_WHITE) != oldColor;
+			} finally {
+				updatingText = false;
+			}
 		}
 
 		private void textCallback(String text, int shift) {
+			if (updatingText) {
+				return;
+			}
 			try {
 				final boolean isHex = shift < 0;
 				final int compare = Integer.parseInt(text, isHex ? 16 : 10);

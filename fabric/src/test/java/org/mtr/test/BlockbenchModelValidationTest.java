@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mtr.libraries.com.google.gson.JsonObject;
 import org.mtr.libraries.com.google.gson.JsonParser;
-import org.mtr.mod.Init;
 import org.mtr.mod.resource.BlockbenchModelValidator;
 
 import java.io.IOException;
@@ -19,7 +18,7 @@ public final class BlockbenchModelValidationTest {
 		try (final DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(System.getProperty("user.dir")).resolve("src/main/resources/assets/mtr/models/vehicle"))) {
 			stream.forEach(path -> {
 				final String id = FilenameUtils.getBaseName(path.toString());
-				Init.LOGGER.info("Validating {}", id);
+				System.out.println("Validating " + id);
 
 				try {
 					final JsonObject modelObject = JsonParser.parseReader(Files.newBufferedReader(path)).getAsJsonObject();

@@ -23,7 +23,7 @@ public class BlockPlatformSlab extends SlabBlockExtension implements PlatformHel
 	@Override
 	public BlockState getPlacementState2(ItemPlacementContext ctx) {
 		final BlockState slabState = super.getPlacementState2(ctx);
-		return (slabState == null ? getDefaultState2() : slabState).with(new Property<>(FACING.data), ctx.getPlayerFacing().data);
+		return (slabState == null ? getDefaultState2() : slabState).with(FACING, ctx.getPlayerFacing());
 	}
 
 	@Override

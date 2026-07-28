@@ -37,12 +37,10 @@ public class VehicleLoopingSoundInstance extends MovingSoundInstanceExtension {
 	public void tick2() {
 	}
 
-	@Override
 	public boolean shouldAlwaysPlay2() {
 		return true;
 	}
 
-	@Override
 	public boolean canPlay2() {
 		return true;
 	}
