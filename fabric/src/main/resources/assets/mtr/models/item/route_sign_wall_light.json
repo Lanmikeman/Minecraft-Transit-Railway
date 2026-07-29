@@ -1,6 +1,7 @@
 {
-	"parent": "item/generated",
-	"textures": {
-		"layer0": "mtr:item/route_sign_wall_light"
-	}
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "mtr:item/route_sign_wall_light",
+    "particle": "mtr:item/route_sign_wall_light"
+  }
 }

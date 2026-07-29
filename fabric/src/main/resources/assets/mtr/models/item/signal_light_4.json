@@ -1,6 +1,7 @@
 {
-	"parent": "item/generated",
-	"textures": {
-		"layer0": "mtr:item/signal_light_2_aspect_4"
-	}
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "mtr:item/signal_light_2_aspect_4",
+    "particle": "mtr:item/signal_light_2_aspect_4"
+  }
 }

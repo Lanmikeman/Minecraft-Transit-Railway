@@ -1,6 +1,7 @@
 {
-	"parent": "block/leaves",
-	"textures": {
-		"all": "block/birch_log"
-	}
+  "parent": "block/leaves",
+  "textures": {
+    "all": "block/birch_log",
+    "particle": "block/birch_log"
+  }
 }

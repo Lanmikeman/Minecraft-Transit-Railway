@@ -1,6 +1,7 @@
 {
-	"parent": "item/generated",
-	"textures": {
-		"layer0": "mtr:item/station_name_wall_white"
-	}
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "mtr:item/station_name_wall_white",
+    "particle": "mtr:item/station_name_wall_white"
+  }
 }

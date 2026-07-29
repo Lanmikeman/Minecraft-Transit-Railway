@@ -1,6 +1,7 @@
 {
-	"parent": "item/generated",
-	"textures": {
-		"layer0": "mtr:item/railway_sign_7_odd"
-	}
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "mtr:item/railway_sign_7_odd",
+    "particle": "mtr:item/railway_sign_7_odd"
+  }
 }

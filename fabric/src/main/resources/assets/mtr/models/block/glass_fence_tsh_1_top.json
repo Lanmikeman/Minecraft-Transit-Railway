@@ -1,6 +1,9 @@
 {
-	"parent": "mtr:block/glass_fence_top_base",
-	"textures": {
-		"particle": "mtr:block/flowers/tsh_1"
-	}
+  "parent": "mtr:block/glass_fence_top_base",
+  "textures": {
+    "particle": {
+      "sprite": "mtr:block/flowers/tsh_1",
+      "force_translucent": true
+    }
+  }
 }

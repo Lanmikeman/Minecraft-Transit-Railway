@@ -1,6 +1,7 @@
 {
-	"parent": "item/generated",
-	"textures": {
-		"layer0": "mtr:item/ticket_processor_exit"
-	}
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "mtr:item/ticket_processor_exit",
+    "particle": "mtr:item/ticket_processor_exit"
+  }
 }

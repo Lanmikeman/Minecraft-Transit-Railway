@@ -1,6 +1,7 @@
 {
-	"parent": "block/leaves",
-	"textures": {
-		"all": "block/white_concrete_powder"
-	}
+  "parent": "block/leaves",
+  "textures": {
+    "all": "block/white_concrete_powder",
+    "particle": "block/white_concrete_powder"
+  }
 }

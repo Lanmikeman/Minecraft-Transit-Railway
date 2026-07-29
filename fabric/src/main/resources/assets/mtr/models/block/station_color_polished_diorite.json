@@ -1,6 +1,7 @@
 {
-	"parent": "block/leaves",
-	"textures": {
-		"all": "block/polished_diorite"
-	}
+  "parent": "block/leaves",
+  "textures": {
+    "all": "block/polished_diorite",
+    "particle": "block/polished_diorite"
+  }
 }

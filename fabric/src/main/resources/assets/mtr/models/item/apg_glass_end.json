@@ -1,6 +1,7 @@
 {
-	"parent": "item/generated",
-	"textures": {
-		"layer0": "mtr:item/apg_glass_end"
-	}
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "mtr:item/apg_glass_end",
+    "particle": "mtr:item/apg_glass_end"
+  }
 }

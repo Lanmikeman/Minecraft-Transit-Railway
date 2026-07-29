@@ -1,7 +1,13 @@
 {
-	"parent": "mtr:block/station_color_slab_bottom_base",
-	"textures": {
-		"particle": "block/white_stained_glass",
-		"texture": "block/white_stained_glass"
-	}
+  "parent": "mtr:block/station_color_slab_bottom_base",
+  "textures": {
+    "particle": {
+      "sprite": "block/white_stained_glass",
+      "force_translucent": true
+    },
+    "texture": {
+      "sprite": "block/white_stained_glass",
+      "force_translucent": true
+    }
+  }
 }

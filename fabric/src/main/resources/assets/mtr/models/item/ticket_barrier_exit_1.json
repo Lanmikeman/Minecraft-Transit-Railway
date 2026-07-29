@@ -1,6 +1,7 @@
 {
-	"parent": "item/generated",
-	"textures": {
-		"layer0": "mtr:item/ticket_barrier_exit_1"
-	}
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "mtr:item/ticket_barrier_exit_1",
+    "particle": "mtr:item/ticket_barrier_exit_1"
+  }
 }

@@ -1,6 +1,7 @@
 {
-	"parent": "block/leaves",
-	"textures": {
-		"all": "block/coal_ore"
-	}
+  "parent": "block/leaves",
+  "textures": {
+    "all": "block/coal_ore",
+    "particle": "block/coal_ore"
+  }
 }

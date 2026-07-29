@@ -1,6 +1,7 @@
 {
-	"parent": "item/generated",
-	"textures": {
-		"layer0": "mtr:item/railway_sign_4_even"
-	}
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "mtr:item/railway_sign_4_even",
+    "particle": "mtr:item/railway_sign_4_even"
+  }
 }

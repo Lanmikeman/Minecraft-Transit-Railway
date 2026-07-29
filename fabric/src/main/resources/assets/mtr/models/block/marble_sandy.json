@@ -1,6 +1,7 @@
 {
-	"parent": "block/cube_all",
-	"textures": {
-		"all": "mtr:block/rock_2"
-	}
+  "parent": "block/cube_all",
+  "textures": {
+    "all": "mtr:block/rock_2",
+    "particle": "mtr:block/rock_2"
+  }
 }

@@ -1,6 +1,7 @@
 {
-	"parent": "block/leaves",
-	"textures": {
-		"all": "mtr:block/mosaic_tile"
-	}
+  "parent": "block/leaves",
+  "textures": {
+    "all": "mtr:block/mosaic_tile",
+    "particle": "mtr:block/mosaic_tile"
+  }
 }

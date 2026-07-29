@@ -1,6 +1,9 @@
 {
-	"parent": "mtr:block/glass_fence_normal_bottom_base",
-	"textures": {
-		"particle": "block/white_stained_glass"
-	}
+  "parent": "mtr:block/glass_fence_normal_bottom_base",
+  "textures": {
+    "particle": {
+      "sprite": "block/white_stained_glass",
+      "force_translucent": true
+    }
+  }
 }

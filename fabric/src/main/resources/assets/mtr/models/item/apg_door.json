@@ -1,6 +1,7 @@
 {
-	"parent": "item/generated",
-	"textures": {
-		"layer0": "mtr:item/apg_door"
-	}
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "mtr:item/apg_door",
+    "particle": "mtr:item/apg_door"
+  }
 }

@@ -1,6 +1,13 @@
 {
-	"parent": "block/leaves",
-	"textures": {
-		"all": "block/white_stained_glass"
-	}
+  "parent": "block/leaves",
+  "textures": {
+    "all": {
+      "sprite": "block/white_stained_glass",
+      "force_translucent": true
+    },
+    "particle": {
+      "sprite": "block/white_stained_glass",
+      "force_translucent": true
+    }
+  }
 }

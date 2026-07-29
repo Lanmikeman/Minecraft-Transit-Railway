@@ -1,6 +1,7 @@
 {
-	"parent": "block/leaves",
-	"textures": {
-		"all": "block/quartz_block_side"
-	}
+  "parent": "block/leaves",
+  "textures": {
+    "all": "block/quartz_block_side",
+    "particle": "block/quartz_block_side"
+  }
 }

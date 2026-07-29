@@ -1,6 +1,7 @@
 {
-	"parent": "item/generated",
-	"textures": {
-		"layer0": "mtr:item/ceiling"
-	}
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "mtr:item/ceiling",
+    "particle": "mtr:item/ceiling"
+  }
 }

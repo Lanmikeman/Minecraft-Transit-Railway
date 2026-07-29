@@ -1,6 +1,9 @@
 {
-	"parent": "mtr:block/glass_fence_top_base",
-	"textures": {
-		"particle": "mtr:block/flowers/cio_2"
-	}
+  "parent": "mtr:block/glass_fence_top_base",
+  "textures": {
+    "particle": {
+      "sprite": "mtr:block/flowers/cio_2",
+      "force_translucent": true
+    }
+  }
 }

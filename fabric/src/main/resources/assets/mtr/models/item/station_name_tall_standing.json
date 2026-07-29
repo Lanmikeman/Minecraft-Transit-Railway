@@ -1,6 +1,7 @@
 {
-	"parent": "item/generated",
-	"textures": {
-		"layer0": "mtr:item/station_name_tall_standing"
-	}
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "mtr:item/station_name_tall_standing",
+    "particle": "mtr:item/station_name_tall_standing"
+  }
 }

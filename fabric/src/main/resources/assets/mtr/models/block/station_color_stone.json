@@ -1,6 +1,7 @@
 {
-	"parent": "block/leaves",
-	"textures": {
-		"all": "block/stone"
-	}
+  "parent": "block/leaves",
+  "textures": {
+    "all": "block/stone",
+    "particle": "block/stone"
+  }
 }

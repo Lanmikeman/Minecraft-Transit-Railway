@@ -1,6 +1,7 @@
 {
-	"parent": "item/generated",
-	"textures": {
-		"layer0": "mtr:item/arrival_projector_1_small"
-	}
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "mtr:item/arrival_projector_1_small",
+    "particle": "mtr:item/arrival_projector_1_small"
+  }
 }

@@ -1,6 +1,7 @@
 {
-	"parent": "item/generated",
-	"textures": {
-		"layer0": "mtr:block/tactile_map"
-	}
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "mtr:block/tactile_map",
+    "particle": "mtr:block/tactile_map"
+  }
 }

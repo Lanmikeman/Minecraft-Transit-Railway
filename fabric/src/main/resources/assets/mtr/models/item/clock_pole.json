@@ -1,6 +1,7 @@
 {
-	"parent": "item/generated",
-	"textures": {
-		"layer0": "mtr:item/clock_pole"
-	}
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "mtr:item/clock_pole",
+    "particle": "mtr:item/clock_pole"
+  }
 }

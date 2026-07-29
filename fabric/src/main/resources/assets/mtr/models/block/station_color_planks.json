@@ -1,6 +1,7 @@
 {
-	"parent": "block/leaves",
-	"textures": {
-		"all": "mtr:block/station_color_planks"
-	}
+  "parent": "block/leaves",
+  "textures": {
+    "all": "mtr:block/station_color_planks",
+    "particle": "mtr:block/station_color_planks"
+  }
 }

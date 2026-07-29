@@ -1,6 +1,13 @@
 {
-	"parent": "item/generated",
-	"textures": {
-		"layer0": "mtr:item/glass_fence_ckt"
-	}
+  "parent": "item/generated",
+  "textures": {
+    "layer0": {
+      "sprite": "mtr:item/glass_fence_ckt",
+      "force_translucent": true
+    },
+    "particle": {
+      "sprite": "mtr:item/glass_fence_ckt",
+      "force_translucent": true
+    }
+  }
 }

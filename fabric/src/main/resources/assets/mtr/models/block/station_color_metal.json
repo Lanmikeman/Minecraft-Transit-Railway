@@ -1,6 +1,7 @@
 {
-	"parent": "block/leaves",
-	"textures": {
-		"all": "mtr:block/metal"
-	}
+  "parent": "block/leaves",
+  "textures": {
+    "all": "mtr:block/metal",
+    "particle": "mtr:block/metal"
+  }
 }

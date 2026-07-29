@@ -1,6 +1,7 @@
 {
-	"parent": "item/generated",
-	"textures": {
-		"layer0": "mtr:item/pids_2"
-	}
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "mtr:item/pids_2",
+    "particle": "mtr:item/pids_2"
+  }
 }

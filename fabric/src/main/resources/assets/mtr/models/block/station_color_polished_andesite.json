@@ -1,6 +1,7 @@
 {
-	"parent": "block/leaves",
-	"textures": {
-		"all": "block/polished_andesite"
-	}
+  "parent": "block/leaves",
+  "textures": {
+    "all": "block/polished_andesite",
+    "particle": "block/polished_andesite"
+  }
 }

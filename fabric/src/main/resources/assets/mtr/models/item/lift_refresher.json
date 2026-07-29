@@ -1,6 +1,7 @@
 {
-	"parent": "item/generated",
-	"textures": {
-		"layer0": "mtr:item/lift_refresher"
-	}
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "mtr:item/lift_refresher",
+    "particle": "mtr:item/lift_refresher"
+  }
 }

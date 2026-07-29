@@ -1,8 +1,9 @@
 {
-	"parent": "block/slab_top",
-	"textures": {
-		"bottom": "mtr:block/metal",
-		"top": "mtr:block/metal",
-		"side": "mtr:block/metal"
-	}
+  "parent": "block/slab_top",
+  "textures": {
+    "bottom": "mtr:block/metal",
+    "top": "mtr:block/metal",
+    "side": "mtr:block/metal",
+    "particle": "mtr:block/metal"
+  }
 }

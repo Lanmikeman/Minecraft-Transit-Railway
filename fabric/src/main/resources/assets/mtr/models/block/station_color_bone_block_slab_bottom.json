@@ -1,7 +1,8 @@
 {
-	"parent": "mtr:block/station_color_slab_bottom_pillar_base",
-	"textures": {
-		"end": "block/bone_block_top",
-		"side": "block/bone_block_side"
-	}
+  "parent": "mtr:block/station_color_slab_bottom_pillar_base",
+  "textures": {
+    "end": "block/bone_block_top",
+    "side": "block/bone_block_side",
+    "particle": "block/bone_block_side"
+  }
 }
