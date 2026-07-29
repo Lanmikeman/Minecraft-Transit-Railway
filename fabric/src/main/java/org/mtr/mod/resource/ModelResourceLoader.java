@@ -30,17 +30,32 @@ public final class ModelResourceLoader {
 			return new Object2ObjectAVLTreeMap<>(OptimizedModel.ObjModel.loadModel(
 					convertedModel.getObjContent(),
 					mtlString -> convertedModel.getMtlContent(),
-					textureString -> StringUtils.isEmpty(textureString) ? OptimizedModelWrapper.WHITE_TEXTURE : StringUtils.equals(textureString, "default.png") ? textureId : CustomResourceTools.getResourceFromSamePath(modelResource, textureString, "png"),
+					textureString -> resolveTexture(textureString, textureId, modelResource),
 					null, true, flipTextureV
 			));
 		} else {
 			return new Object2ObjectAVLTreeMap<>(OptimizedModel.ObjModel.loadModel(
 					resourceProvider.get(CustomResourceTools.formatIdentifierWithDefault(modelResource, "obj")),
 					mtlString -> resourceProvider.get(CustomResourceTools.getResourceFromSamePath(modelResource, mtlString, "mtl")),
-					textureString -> StringUtils.isEmpty(textureString) ? OptimizedModelWrapper.WHITE_TEXTURE : StringUtils.equals(textureString, "default.png") ? textureId : CustomResourceTools.getResourceFromSamePath(modelResource, textureString, "png"),
+					textureString -> resolveTexture(textureString, textureId, modelResource),
 					null, true, flipTextureV
 			));
 		}
+	}
+
+	private static Identifier resolveTexture(String textureString, Identifier textureId, String modelResource) {
+		if (StringUtils.isEmpty(textureString)) {
+			return OptimizedModelWrapper.WHITE_TEXTURE;
+		}
+		// JSON textureResource wins for bare material names (rail / rail_siding / default.png)
+		if (StringUtils.equals(textureString, "default.png")
+				|| StringUtils.equals(textureString, "rail")
+				|| StringUtils.equals(textureString, "rail_siding")
+				|| StringUtils.equals(textureString, "rail.png")
+				|| StringUtils.equals(textureString, "rail_siding.png")) {
+			return textureId;
+		}
+		return CustomResourceTools.getResourceFromSamePath(modelResource, textureString, "png");
 	}
 
 	public static ObjectArrayList<String> getModelParts(String name, String content) {

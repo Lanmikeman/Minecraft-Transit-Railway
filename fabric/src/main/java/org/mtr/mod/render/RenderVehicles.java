@@ -33,6 +33,17 @@ public class RenderVehicles implements IGui {
 
 	public static final ObjectArrayList<RidingPlayerInterpolation> RIDING_PLAYER_INTERPOLATIONS = new ObjectArrayList<>();
 
+	/** Skip bogies / gangways / barriers beyond this distance (squared). */
+	private static final double DETAIL_DISTANCE_SQ = 48 * 48;
+	/** Soft-path bogies are extra OBJ passes — only when reasonably close. */
+	private static final double BOGIE_DISTANCE_SQ = 32 * 32;
+	/** Skip floor/doorway debug overlays beyond this distance (squared). */
+	private static final double OVERLAY_DISTANCE_SQ = 24 * 24;
+	/** World-Y lift while default 3D rails are on (same for car + bogie to keep pack proportions). */
+	private static final double RAIL_3D_Y_LIFT = 0.32;
+	/** Extra world-Y for the riding player so the camera/avatar sits higher in the cabin. */
+	private static final double RAIL_3D_RIDER_EXTRA_Y = 0.24;
+
 	public static void render(long millisElapsed, Vector3d cameraShakeOffset) {
 		final MinecraftClient minecraftClient = MinecraftClient.getInstance();
 		final ClientWorld clientWorld = minecraftClient.getWorldMapped();
@@ -113,20 +124,37 @@ public class RenderVehicles implements IGui {
 						// Riding offset
 						final PositionAndRotation absoluteVehicleCarPositionAndRotation = vehicleCarDetails.right().right();
 						final PositionAndRotation vehicleCarRenderingPositionAndRotation = getRenderPositionAndRotation(offsetVector, offsetRotation, ridingCarPositionAndRotation, absoluteVehicleCarPositionAndRotation, cameraShakeOffset);
+						final boolean ridingThisVehicle = VehicleRidingMovement.isRiding(vehicle.getId());
+						final double carDx = absoluteVehicleCarPositionAndRotation.position.x - cameraPosition.getXMapped();
+						final double carDy = absoluteVehicleCarPositionAndRotation.position.y - cameraPosition.getYMapped();
+						final double carDz = absoluteVehicleCarPositionAndRotation.position.z - cameraPosition.getZMapped();
+						final double carDistSq = carDx * carDx + carDy * carDy + carDz * carDz;
+						final boolean renderDetail = ridingThisVehicle || carDistSq < DETAIL_DISTANCE_SQ;
+						final boolean renderOverlays = ridingThisVehicle || carDistSq < OVERLAY_DISTANCE_SQ;
+						final boolean renderBogies = ridingThisVehicle || carDistSq < BOGIE_DISTANCE_SQ;
 
-						// Render each bogie of the car
-						iterateWithIndex(vehicleCarDetails.right().left(), (bogieIndex, absoluteBogiePositionAndRotation) -> {
-							final PositionAndRotation bogieRenderingPositionAndRotation = getRenderPositionAndRotation(offsetVector, offsetRotation, ridingCarPositionAndRotation, absoluteBogiePositionAndRotation, cameraShakeOffset);
-							final StoredMatrixTransformations storedMatrixTransformations = getStoredMatrixTransformations(offsetVector == null, bogieRenderingPositionAndRotation, 0);
-							if (OptimizedRenderer.hasOptimizedRendering()) {
-								vehicleResource.queueBogie(bogieIndex, storedMatrixTransformations, vehicle, absoluteVehicleCarPositionAndRotation.light);
-							} else {
-								vehicleResource.iterateBogieModels(bogieIndex, (modelIndex, model) -> model.render(storedMatrixTransformations, vehicle, carNumber, scrollingDisplayIndexTracker, absoluteVehicleCarPositionAndRotation.light, new ObjectArrayList<>(), fromResourcePackCreator));
-							}
-						});
+						// Render each bogie of the car (skip far away — large OBJ packs)
+						if (renderBogies) {
+							iterateWithIndex(vehicleCarDetails.right().left(), (bogieIndex, absoluteBogiePositionAndRotation) -> {
+								final PositionAndRotation bogieRenderingPositionAndRotation = getRenderPositionAndRotation(offsetVector, offsetRotation, ridingCarPositionAndRotation, absoluteBogiePositionAndRotation, cameraShakeOffset);
+								final boolean absoluteRender = offsetVector == null;
+								final StoredMatrixTransformations storedMatrixTransformations = getStoredMatrixTransformations(absoluteRender, bogieRenderingPositionAndRotation, 0, absoluteRender ? rail3dYLift() : 0);
+								if (OptimizedRenderer.hasOptimizedRendering()) {
+									vehicleResource.queueBogie(bogieIndex, storedMatrixTransformations, vehicle, absoluteVehicleCarPositionAndRotation.light);
+								} else {
+									vehicleResource.iterateBogieModels(bogieIndex, (modelIndex, model) -> model.render(storedMatrixTransformations, vehicle, carNumber, scrollingDisplayIndexTracker, absoluteVehicleCarPositionAndRotation.light, new ObjectArrayList<>(), fromResourcePackCreator));
+								}
+							});
+						}
 
-						// Player position relative to the car
-						final Vector3d playerPosition = absoluteVehicleCarPositionAndRotation.transformBackwards(clientPlayerEntity.getPos(), Vector3d::rotateX, Vector3d::rotateY, Vector3d::add);
+						// Player position relative to the car (undo riding world lifts so floor/door boxes still match)
+						final double riderWorldLift = ridingThisVehicle ? getRail3dRiderYLift() : 0;
+						final Vector3d playerWorldForVehicle = riderWorldLift == 0 ? clientPlayerEntity.getPos() : new Vector3d(
+								clientPlayerEntity.getPos().getXMapped(),
+								clientPlayerEntity.getPos().getYMapped() - riderWorldLift,
+								clientPlayerEntity.getPos().getZMapped()
+						);
+						final Vector3d playerPosition = absoluteVehicleCarPositionAndRotation.transformBackwards(playerWorldForVehicle, Vector3d::rotateX, Vector3d::rotateY, Vector3d::add);
 						// A temporary list to store all floors and doorways for player movement
 						final ObjectArrayList<ObjectBooleanImmutablePair<Box>> floorsAndDoorways = new ObjectArrayList<>();
 						// Extra floors to be used to define where the gangways are
@@ -185,7 +213,9 @@ public class RenderVehicles implements IGui {
 											openFloorsAndDoorways.add(floor);
 										}
 									}
-									RenderVehicleHelper.renderFloorOrDoorway(floor, ARGB_WHITE, playerPosition, vehicleCarRenderingPositionAndRotation, offsetVector == null);
+									if (renderOverlays) {
+										RenderVehicleHelper.renderFloorOrDoorway(floor, ARGB_WHITE, playerPosition, vehicleCarRenderingPositionAndRotation, offsetVector == null);
+									}
 									// Find the floors with the lowest and highest Z values to be used to define where the gangways are
 									gangwayMovementPositions1.check(floor);
 									gangwayMovementPositions2.check(floor);
@@ -196,7 +226,9 @@ public class RenderVehicles implements IGui {
 								final Box doorway = openDoorway.left();
 								floorsAndDoorways.add(new ObjectBooleanImmutablePair<>(doorway, false));
 								openFloorsAndDoorways.add(doorway);
-								RenderVehicleHelper.renderFloorOrDoorway(doorway, 0xFFFF0000, playerPosition, vehicleCarRenderingPositionAndRotation, offsetVector == null);
+								if (renderOverlays) {
+									RenderVehicleHelper.renderFloorOrDoorway(doorway, 0xFFFF0000, playerPosition, vehicleCarRenderingPositionAndRotation, offsetVector == null);
+								}
 							});
 
 							// Check and mount player
@@ -214,13 +246,21 @@ public class RenderVehicles implements IGui {
 						}
 
 						// Each car can have more than one model defined
-						final StoredMatrixTransformations storedMatrixTransformations = getStoredMatrixTransformations(offsetVector == null, vehicleCarRenderingPositionAndRotation, oscillationAmount);
+						final boolean absoluteRender = offsetVector == null;
+						final StoredMatrixTransformations storedMatrixTransformations = getStoredMatrixTransformations(absoluteRender, vehicleCarRenderingPositionAndRotation, oscillationAmount, absoluteRender ? rail3dYLift() : 0);
 						if (OptimizedRenderer.hasOptimizedRendering()) {
 							vehicleResource.queue(storedMatrixTransformations, vehicle, carNumber, vehicle.vehicleExtraData.immutableVehicleCars.size(), absoluteVehicleCarPositionAndRotation.light, openDoorways.isEmpty());
 						}
 
+						// Soft-path already drew the body; skip displays/connections for distant cars unless doors need animation.
+						final boolean iterateLegacyOrDetail = !OptimizedRenderer.hasOptimizedRendering() || renderDetail || !openDoorways.isEmpty();
+						if (iterateLegacyOrDetail) {
 						vehicleResource.iterateModels(carNumber, vehicle.vehicleExtraData.immutableVehicleCars.size(), (modelIndex, model) -> {
 							model.render(storedMatrixTransformations, vehicle, carNumber, scrollingDisplayIndexTracker, absoluteVehicleCarPositionAndRotation.light, openDoorways, fromResourcePackCreator);
+
+							if (!renderDetail) {
+								return;
+							}
 
 							while (modelIndex >= previousGangwayPositionsList.size()) {
 								previousGangwayPositionsList.add(new PreviousConnectionPositions());
@@ -276,6 +316,7 @@ public class RenderVehicles implements IGui {
 									vehicle.getIsOnRoute()
 							);
 						});
+						}
 
 						// If the vehicle has gangways, add extra floors to define where the gangways are
 						final Box gangwayConnectionFloor1 = gangwayMovementPositions1.getBox();
@@ -399,13 +440,17 @@ public class RenderVehicles implements IGui {
 	 * @return the adjusted {@link StoredMatrixTransformations} object
 	 */
 	public static StoredMatrixTransformations getStoredMatrixTransformations(boolean useOffset, PositionAndRotation renderingPositionAndRotation, double oscillationAmount) {
+		return getStoredMatrixTransformations(useOffset, renderingPositionAndRotation, oscillationAmount, 0);
+	}
+
+	public static StoredMatrixTransformations getStoredMatrixTransformations(boolean useOffset, PositionAndRotation renderingPositionAndRotation, double oscillationAmount, double yLift) {
 		final StoredMatrixTransformations storedMatrixTransformations;
 
 		if (useOffset) {
-			storedMatrixTransformations = new StoredMatrixTransformations(renderingPositionAndRotation.position.x, renderingPositionAndRotation.position.y, renderingPositionAndRotation.position.z);
+			storedMatrixTransformations = new StoredMatrixTransformations(renderingPositionAndRotation.position.x, renderingPositionAndRotation.position.y + yLift, renderingPositionAndRotation.position.z);
 		} else {
 			storedMatrixTransformations = new StoredMatrixTransformations();
-			storedMatrixTransformations.add(graphicsHolder -> graphicsHolder.translate(renderingPositionAndRotation.position.x, renderingPositionAndRotation.position.y, renderingPositionAndRotation.position.z));
+			storedMatrixTransformations.add(graphicsHolder -> graphicsHolder.translate(renderingPositionAndRotation.position.x, renderingPositionAndRotation.position.y + yLift, renderingPositionAndRotation.position.z));
 		}
 
 		storedMatrixTransformations.add(graphicsHolder -> {
@@ -415,6 +460,21 @@ public class RenderVehicles implements IGui {
 		});
 
 		return storedMatrixTransformations;
+	}
+
+	private static double rail3dYLift() {
+		return Config.getClient().getDefaultRail3D() && OptimizedRenderer.hasOptimizedRendering() ? RAIL_3D_Y_LIFT : 0;
+	}
+
+	/** Vehicle/bogie world-Y offset when default 3D rails are on. */
+	public static double getRail3dYLift() {
+		return rail3dYLift();
+	}
+
+	/** Rider world-Y = vehicle lift + cabin extra (keeps floors/doors in sync via undo on relative checks). */
+	public static double getRail3dRiderYLift() {
+		final double base = rail3dYLift();
+		return base == 0 ? 0 : base + RAIL_3D_RIDER_EXTRA_Y;
 	}
 
 	/**
@@ -482,7 +542,8 @@ public class RenderVehicles implements IGui {
 				new PositionAndRotation(playerCarPositionAndRotation.position.add(interpolatedPosition.rotateX(playerCarPositionAndRotation.pitch).rotateY(playerCarPositionAndRotation.yaw)), 0, 0),
 				cameraShakeOffset
 		);
-		final StoredMatrixTransformations storedMatrixTransformations = getStoredMatrixTransformations(offsetVector == null, playerRenderingPositionAndRotation, 0);
+		final boolean absoluteRender = offsetVector == null;
+		final StoredMatrixTransformations storedMatrixTransformations = getStoredMatrixTransformations(absoluteRender, playerRenderingPositionAndRotation, 0, absoluteRender ? rail3dYLift() : 0);
 
 		// Render player
 		MainRenderer.scheduleRender(QueuedRenderLayer.INTERIOR, (graphicsHolder, offset) -> {

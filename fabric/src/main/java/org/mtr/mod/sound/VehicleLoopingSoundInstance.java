@@ -15,21 +15,23 @@ public class VehicleLoopingSoundInstance extends MovingSoundInstanceExtension {
 
 	public void setData(float volume, float pitch, BlockPos blockPos) {
 		setPitch(pitch == 0 ? 1 : pitch);
-		setVolume(volume);
+		// Keep a tiny audible floor while "playing" to avoid stop/restart thrash near 0.
+		final float clampedVolume = volume <= 0 ? 0 : Math.max(volume, 0.0001F);
+		setVolume(clampedVolume);
 		setX(blockPos.getX());
 		setY(blockPos.getY());
 		setZ(blockPos.getZ());
 
 		final SoundManager soundManager = MinecraftClient.getInstance().getSoundManager();
-		if (soundManager.isPlaying(new SoundInstance(this))) {
+		final boolean playing = soundManager.isPlaying(new SoundInstance(this));
+		if (playing) {
 			if (volume <= 0) {
 				soundManager.stop(new SoundInstance(this));
 			}
-		} else {
-			if (volume > 0) {
-				setIsRepeatableMapped(true);
-				soundManager.play(new SoundInstance(this));
-			}
+		} else if (volume > 0) {
+			setIsRepeatableMapped(true);
+			setRepeatDelay(0);
+			soundManager.play(new SoundInstance(this));
 		}
 	}
 

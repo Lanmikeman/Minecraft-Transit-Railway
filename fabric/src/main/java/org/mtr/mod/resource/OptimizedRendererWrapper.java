@@ -33,6 +33,13 @@ public final class OptimizedRendererWrapper implements IGui {
 		}
 	}
 
+	/** Soft/GPU queue for an already-built {@link org.mtr.mapping.mapper.OptimizedModel}. */
+	public void queueModel(org.mtr.mapping.mapper.OptimizedModel optimizedModel, GraphicsHolder graphicsHolder, int light) {
+		if (optimizedRenderer != null && optimizedModel != null) {
+			optimizedRenderer.queue(optimizedModel, graphicsHolder, ARGB_WHITE, light);
+		}
+	}
+
 	public void render(boolean renderTranslucent) {
 		if (optimizedRenderer != null) {
 			optimizedRenderer.render(renderTranslucent);

@@ -24,7 +24,9 @@ public final class ScheduledSound {
 	private void play() {
 		final ClientWorld clientWorld = MinecraftClient.getInstance().getWorldMapped();
 		if (clientWorld != null) {
-			SCHEDULED_SOUNDS.values().forEach(scheduledSound -> clientWorld.playSoundAtBlockCenter(blockPos, soundEvent, SoundCategory.getBlocksMapped(), gain, pitch, false));
+			// Play only this scheduled entry once. Iterating SCHEDULED_SOUNDS here used to
+			// multiply one-shots (N sounds → N² playbacks) and caused train sound stutter.
+			clientWorld.playSoundAtBlockCenter(blockPos, soundEvent, SoundCategory.getBlocksMapped(), gain, pitch, false);
 		}
 	}
 

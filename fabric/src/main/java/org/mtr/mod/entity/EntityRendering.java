@@ -38,7 +38,9 @@ public class EntityRendering extends EntityExtension {
 
 	private void update(boolean skipDistanceCheck) {
 		final Vector3d position = MinecraftClient.getInstance().getGameRendererMapped().getCamera().getPos();
-		if (skipDistanceCheck || position.squaredDistanceTo(getPos2()) > 1 || MinecraftClient.getInstance().isPaused()) {
+		// Always follow the camera. The old "> 1 block" threshold left the render anchor
+		// behind the interpolated camera and caused rails/vehicles to jitter while moving/looking.
+		if (skipDistanceCheck || MinecraftClient.getInstance().isPaused() || position.squaredDistanceTo(getPos2()) > 1.0E-6) {
 			setPosition2(position.getXMapped(), position.getYMapped(), position.getZMapped());
 		}
 	}

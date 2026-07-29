@@ -16,8 +16,8 @@ loom {
 }
 
 dependencies {
-	minecraft "com.mojang:minecraft:${minecraftVersion}"
-	final boolean unobfuscated = minecraftVersion.startsWith("26.") || minecraftVersion.startsWith("27.")
+	minecraft "com.mojang:minecraft:${buildTools.minecraftVersion}"
+	final boolean unobfuscated = buildTools.minecraftVersion.startsWith("26.") || buildTools.minecraftVersion.startsWith("27.")
 	if (!unobfuscated) {
 		mappings "net.fabricmc:yarn:${buildTools.getYarnVersion()}:v2"
 	}
@@ -30,10 +30,10 @@ dependencies {
 		modImplementation "net.fabricmc.fabric-api:fabric-api:${buildTools.getFabricApiVersion()}"
 		modApi("com.terraformersmc:modmenu:${buildTools.getModMenuVersion()}") { exclude group: "net.fabricmc", module: "fabric-loader" }
 	}
-	shadowImplementation "org.mtr:Minecraft-Mappings-fabric-${minecraftVersion}:0.0.1-dev"
+	shadowImplementation "org.mtr:Minecraft-Mappings-fabric-${buildTools.minecraftVersion}:0.0.1-dev"
 	// minecraft-client.jar onto compile classpath
-	def _mtrClientJar = file("${gradle.gradleUserHomeDir}/caches/fabric-loom/${minecraftVersion}/minecraft-client.jar")
-	if ((minecraftVersion.startsWith("26.") || minecraftVersion.startsWith("27.")) && _mtrClientJar.exists()) {
+	def _mtrClientJar = file("${gradle.gradleUserHomeDir}/caches/fabric-loom/${buildTools.minecraftVersion}/minecraft-client.jar")
+	if ((buildTools.minecraftVersion.startsWith("26.") || buildTools.minecraftVersion.startsWith("27.")) && _mtrClientJar.exists()) {
 		compileOnly files(_mtrClientJar)
 	}
 	testImplementation "org.junit.jupiter:junit-jupiter-api:5.+"

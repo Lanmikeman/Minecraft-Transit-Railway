@@ -69,6 +69,11 @@ public class RenderEyeCandy extends BlockEntityRenderer<BlockEyeCandy.BlockEntit
 
 	@Override
 	public boolean isInRenderDistance(BlockEyeCandy.BlockEntity blockEntity, Vector3d position) {
-		return true;
+		final BlockPos pos = blockEntity.getPos2();
+		final double dx = pos.getX() + 0.5 - position.getXMapped();
+		final double dy = pos.getY() + 0.5 - position.getYMapped();
+		final double dz = pos.getZ() + 0.5 - position.getZMapped();
+		final double maxBlocks = Math.max(32, getRenderDistance2());
+		return dx * dx + dy * dy + dz * dz < maxBlocks * maxBlocks;
 	}
 }

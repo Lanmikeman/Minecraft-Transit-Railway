@@ -64,7 +64,10 @@ public class VehicleExtension extends Vehicle implements Utilities {
 	public void simulate(long millisElapsed) {
 		final double oldRailProgress = railProgress;
 		oldSpeed = speed;
-		simulate(millisElapsed, null, null);
+		// Render-thread prediction: at low FPS a 100–250ms step races past the stop,
+		// then the next server sync snaps the train back (overshoot + teleport).
+		final long simDelta = Math.min(Math.max(0L, millisElapsed), 50L);
+		simulate(simDelta, null, null);
 		persistentVehicleData.tick(railProgress, millisElapsed, vehicleExtraData);
 		final MinecraftClient minecraftClient = MinecraftClient.getInstance();
 		final ClientWorld clientWorld = minecraftClient.getWorldMapped();

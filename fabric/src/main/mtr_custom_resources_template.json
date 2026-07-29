@@ -974,14 +974,20 @@
 			"name": "rail.mtr.default_3d",
 			"color": "A7A7A7",
 			"modelResource": "mtr:models/rail/rail.obj",
-			"repeatInterval": 0.5
+			"textureResource": "mtr:textures/block/rail_3d.png",
+			"flipTextureV": false,
+			"repeatInterval": 0.5,
+			"modelYOffset": 0
 		},
 		{
 			"id": "default_3d_siding",
 			"name": "rail.mtr.default_3d_siding",
 			"color": "E5E533",
 			"modelResource": "mtr:models/rail/rail_siding.obj",
-			"repeatInterval": 0.5
+			"textureResource": "mtr:textures/block/rail_3d_siding.png",
+			"flipTextureV": false,
+			"repeatInterval": 0.5,
+			"modelYOffset": 0
 		}
 	],
 	"objects": [

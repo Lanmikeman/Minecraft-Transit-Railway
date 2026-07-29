@@ -57,9 +57,36 @@ public class MainRenderer extends EntityRenderer<EntityRendering> implements IGu
 		super(argument);
 	}
 
+	/**
+	 * Snap the render-anchor entity to the live camera every frame before vanilla extracts
+	 * {@code state.x/y/z}. Otherwise the PoseStack lag (tick-only entity pos) vs frame-interpolated
+	 * camera makes rails/vehicles jitter when the player moves or looks around.
+	 * <p>
+	 * Skip during Iris/OptiFine shadow passes — player-camera snap fights light-space matrices
+	 * and produces floating ghost trains/rails in the shadow map.
+	 */
+	@Deprecated
+	@Override
+	public void extractRenderState(EntityRendering entity, MtrEntityRenderState<EntityRendering> state, float tickDelta) {
+		if (OptimizedRenderer.renderingShadows()) {
+			super.extractRenderState(entity, state, tickDelta);
+			return;
+		}
+		final Vector3d cameraPos = MinecraftClient.getInstance().getGameRendererMapped().getCamera().getPos();
+		entity.setPosition2(cameraPos.getXMapped(), cameraPos.getYMapped(), cameraPos.getZMapped());
+		entity.setYRot(0);
+		entity.setXRot(0);
+		super.extractRenderState(entity, state, tickDelta);
+		// Keep PoseStack origin at the live camera (cancels tick/frame lag).
+		state.x = cameraPos.getXMapped();
+		state.y = cameraPos.getYMapped();
+		state.z = cameraPos.getZMapped();
+	}
+
 	@Override
 	public void render(EntityRendering entityRendering, float yaw, float tickDelta, GraphicsHolder graphicsHolder, int i) {
-		render(graphicsHolder, entityRendering.getCameraPosVec2(tickDelta));
+		// Use the live camera, not entity eye lerp — must match PoseStack translation origin.
+		render(graphicsHolder, MinecraftClient.getInstance().getGameRendererMapped().getCamera().getPos());
 	}
 
 	@Override
@@ -84,10 +111,10 @@ public class MainRenderer extends EntityRenderer<EntityRendering> implements IGu
 
 		final long millisElapsed;
 		if (OptimizedRenderer.renderingShadows()) {
-			if (Config.getClient().getDisableShadowsForShaders()) {
-				return;
-			}
-			millisElapsed = 0;
+			// Camera-relative MTR geometry cannot be fed into Iris light-space safely yet.
+			// Drawing here filled the shadow map with misplaced trains/rails (sky/ground ghosts).
+			// Always skip the shadow pass; "disable shadows for shaders" stays as a UX label.
+			return;
 		} else {
 			millisElapsed = getMillisElapsed();
 			timerMillis += millisElapsed;
@@ -108,6 +135,7 @@ public class MainRenderer extends EntityRenderer<EntityRendering> implements IGu
 			ArrivalsCacheClient.INSTANCE.tick();
 		}
 
+		// Player feet vs camera (eye) — used only for riding camera-shake compensation.
 		final Vector3d cameraShakeOffset = clientPlayerEntity.getPos().subtract(offset);
 		RenderVehicles.render(millisElapsed, cameraShakeOffset);
 		RenderLifts.render(millisElapsed, cameraShakeOffset);
@@ -214,6 +242,9 @@ public class MainRenderer extends EntityRenderer<EntityRendering> implements IGu
 	private static long getMillisElapsed() {
 		final long millisElapsed = InitClient.getGameMillis() - lastRenderedMillis;
 		final long gameMillisElapsed = (long) (MinecraftClient.getInstance().getLastFrameDuration() * 50);
-		return Math.abs(gameMillisElapsed - millisElapsed) < 50 ? gameMillisElapsed : millisElapsed;
+		// Prefer the game delta when it matches wall-clock; otherwise use wall-clock.
+		// Keep the cap tight: large deltas make vehicles overshoot stops and look like teleports.
+		final long raw = Math.abs(gameMillisElapsed - millisElapsed) < 50 ? gameMillisElapsed : millisElapsed;
+		return Math.max(0, Math.min(raw, 100));
 	}
 }

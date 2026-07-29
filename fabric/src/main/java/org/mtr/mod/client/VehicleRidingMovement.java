@@ -16,6 +16,7 @@ import org.mtr.mod.item.ItemDriverKey;
 import org.mtr.mod.packet.PacketUpdateVehicleRidingEntities;
 import org.mtr.mod.render.PositionAndRotation;
 import org.mtr.mod.render.RenderVehicleHelper;
+import org.mtr.mod.render.RenderVehicles;
 import org.mtr.mod.screen.LiftSelectionScreen;
 
 import javax.annotation.Nullable;
@@ -214,7 +215,7 @@ public class VehicleRidingMovement {
 
 						// ridingPositionCache should always store the relative position of the player with respect to the riding car, even when the player is on a gangway
 						ridingPositionCache = positionAndRotation.transformBackwards(new Vector3d(positionX, positionY, positionZ), Vector3d::rotateX, Vector3d::rotateY, Vector3d::add);
-						movePlayer(positionX, positionY, positionZ);
+						movePlayer(positionX, positionY + RenderVehicles.getRail3dRiderYLift(), positionZ);
 					}
 				}
 			} else {
@@ -266,7 +267,7 @@ public class VehicleRidingMovement {
 
 					ridingPositionCache = new Vector3d(ridingVehicleX, ridingVehicleY, ridingVehicleZ);
 					final Vector3d newPlayerPosition = positionAndRotation.transformForwards(ridingPositionCache, Vector3d::rotateX, Vector3d::rotateY, Vector3d::add);
-					movePlayer(newPlayerPosition.getXMapped(), newPlayerPosition.getYMapped(), newPlayerPosition.getZMapped());
+					movePlayer(newPlayerPosition.getXMapped(), newPlayerPosition.getYMapped() + RenderVehicles.getRail3dRiderYLift(), newPlayerPosition.getZMapped());
 					EntityHelper.setYaw(new Entity(clientPlayerEntity.data), (float) (Math.toDegrees(previousVehicleYaw - positionAndRotation.yaw) + entityYawOld));
 				}
 			}

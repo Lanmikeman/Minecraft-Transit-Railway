@@ -243,14 +243,18 @@ public class RenderRails implements IGui {
 		// Render rail models
 		final boolean[] renderType = {false, false}; // render default rail, rendered something
 		for (final String style : rail.getStyles()) {
+			final String baseStyle = RailResource.getIdWithoutDirection(style);
 			final String newStyle;
-			if (OptimizedRenderer.hasOptimizedRendering() && Config.getClient().getDefaultRail3D() && rail.getTransportMode() == TransportMode.TRAIN) {
-				newStyle = style.equals(CustomResourceLoader.DEFAULT_RAIL_ID) ? rail.isSiding() ? CustomResourceLoader.DEFAULT_RAIL_3D_SIDING_ID : CustomResourceLoader.DEFAULT_RAIL_3D_ID : style;
+			if (OptimizedRenderer.hasOptimizedRendering() && Config.getClient().getDefaultRail3D() && rail.getTransportMode() == TransportMode.TRAIN
+					&& baseStyle.equals(CustomResourceLoader.DEFAULT_RAIL_ID)) {
+				// Keep _1/_2 so flip still works if a pack ever stores directed default.
+				final String id3d = rail.isSiding() ? CustomResourceLoader.DEFAULT_RAIL_3D_SIDING_ID : CustomResourceLoader.DEFAULT_RAIL_3D_ID;
+				newStyle = style.endsWith("_2") ? id3d + "_2" : style.endsWith("_1") ? id3d + "_1" : id3d;
 			} else {
 				newStyle = style;
 			}
 
-			if (newStyle.equals(CustomResourceLoader.DEFAULT_RAIL_ID)) {
+			if (RailResource.getIdWithoutDirection(newStyle).equals(CustomResourceLoader.DEFAULT_RAIL_ID)) {
 				renderType[0] = true;
 			} else {
 				final boolean flip = newStyle.endsWith("_2");
